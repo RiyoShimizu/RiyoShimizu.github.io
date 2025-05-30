@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Welcome</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            margin: 0;
+            padding: 0;
+            background: linear-gradient(135deg, #ff9a9e, #fad0c4);
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            overflow: hidden;
+        }
+        h1 {
+            font-size: 3rem;
+            color: #fff;
+            animation: colorChange 3s infinite;
+        }
+        @keyframes colorChange {
+            0% { color: #fff; }
+            50% { color: #ff9a9e; }
+            100% { color: #fff; }
+        }
+        canvas {
+            position: absolute;
+            top: 0;
+            left: 0;
+        }
+    </style>
+</head>
+<body>
+    <h1>Welcome !</h1>
+    <canvas id="fireworks"></canvas>
+    <script>
+        const canvas = document.getElementById('fireworks');
+        const ctx = canvas.getContext('2d');
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+
+        class Firework {
+            constructor(x, y, color) {
+                this.x = x;
+                this.y = y;
+                this.color = color;
+                this.particles = [];
+                for (let i = 0; i < 100; i++) {
+                    this.particles.push(new Particle(this.x, this.y, this.color));
+                }
+            }
+            update() {
+                this.particles.forEach(particle => particle.update());
+            }
+            draw() {
+                this.particles.forEach(particle => particle.draw());
+            }
+        }
+
+        class Particle {
+            constructor(x, y, color) {
+                this.x = x;
+                this.y = y;
+                this.color = color;
+                this.size = Math.random() * 3 + 1;
+                this.speedX = Math.random() * 6 - 3;
+                this.speedY = Math.random() * 6 - 3;
+                this.alpha = 1;
+            }
+            update() {
+                this.x += this.speedX;
+                this.y += this.speedY;
+                this.alpha -= 0.02;
+            }
+            draw() {
+                ctx.globalAlpha = this.alpha;
+                ctx.beginPath();
+                ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+                ctx.fillStyle = this.color;
+                ctx.fill();
+            }
+        }
+
+        const fireworks = [];
+        function createFirework() {
+            const x = Math.random() * canvas.width;
+            const y = Math.random() * canvas.height;
+            const color = `hsl(${Math.random() * 360}, 100%, 50%)`;
+            fireworks.push(new Firework(x, y, color));
+        }
+
+        function animate() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            fireworks.forEach((firework, index) => {
+                firework.update();
+                firework.draw();
+                if (firework.particles[0].alpha <= 0) {
+                    fireworks.splice(index, 1);
+                }
+            });
+            requestAnimationFrame(animate);
+        }
+
+        setInterval(createFirework, 500);
+        animate();
+
+        // Add event listener to switch screens
+        document.body.addEventListener('click', () => { 
+            window.location.href = 'M.html.html'; // Replace with the actual path to your second HTML file
+        });
+    </script>
+</body>
+</html>
